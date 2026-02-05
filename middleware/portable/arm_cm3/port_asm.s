@@ -38,7 +38,7 @@ switch_sp_to_psp:
     MSR PSP, R0
     POP {LR}
 
-    MRS R0 CONTROL
+    MRS R0, CONTROL
     ORR R0, R0, #0x2
     MSR CONTROL, R0
     ISB

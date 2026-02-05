@@ -1,28 +1,31 @@
 #include <stdint.h>
-#include 'scheduler.h'
+#include "scheduler.h"
 
-uint64_t tsk_dht11_read(void);
-void tsk_i2c_lcd_write(uint32_t data);
+void tsk_dht11_read(void);
+void tsk_i2c_lcd_write(void);
 
-uint32_t stack_array_tsk_dth11_read[128];
-uint32_t stack_array_tsk_i2c_lcd_write[256];
+static uint32_t stack_array_tsk_dht11_read[128];
+static uint32_t stack_array_tsk_i2c_lcd_write[256];
 
 int main(void)
 {
-    init_fault();
     sched_init();
 
-    sched_add_task(&tsk_dth11_read, &stack_array_tsk_dth11_read, 128);
+    sched_add_task(&tsk_dht11_read, &stack_array_tsk_dht11_read[0], 128);
+    sched_add_task(&tsk_i2c_lcd_write, &stack_array_tsk_i2c_lcd_write[0], 256);
 
-    sched_start(&tsk_dth11_read);
+
+    sched_start(&tsk_dht11_read);
 }
 
-uint64_t tsk_dht11_read(void)
+void tsk_dht11_read(void)
 {
-
+    task_delay(1000);
+    task_delay(1000);
 }
 
-void tsk_i2c_lcd_write(uint32_t data)
+void tsk_i2c_lcd_write(void)
 {
-
+    task_delay(1000);
+    task_delay(1000);
 }

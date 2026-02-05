@@ -1,6 +1,6 @@
 ENTRY(Reset_Handler)
 
-_estack = ORIGIN(SRAM) + LENGTH(RAM);
+_estack = ORIGIN(SRAM) + LENGTH(SRAM);
 
 MEMORY
 {

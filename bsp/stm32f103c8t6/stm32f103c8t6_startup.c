@@ -1,12 +1,6 @@
 #include <stdint.h>
 
-/* Bellek Tanımları (STM32F103C8T6 - 20KB RAM) */
-#define SRAM_START 0x20000000U
-#define SRAM_SIZE  (20U * 1024U) // 20 KB
-#define SRAM_END   ((SRAM_START) + (SRAM_SIZE))
-
-#define STACK_START SRAM_END
-
+extern uint32_t _estack;
 extern uint32_t _etext;
 extern uint32_t _sdata;
 extern uint32_t _edata;
@@ -97,87 +91,86 @@ void DMA2_Channel3_Handler(void)  __attribute__ ((weak, alias("Default_Handler")
 void DMA2_Channel4_Handler(void)  __attribute__ ((weak, alias("Default_Handler")));
 void DMA2_Channel5_Handler(void)  __attribute__ ((weak, alias("Default_Handler")));
 
-/* Vektör Tablosu - Section attribute doğru yere alındı */
+/* Vektör Tablosu - Function pointer array */
 __attribute__ ((section(".isr_vector")))
-uint32_t vectors[] = {
-    STACK_START,
-    (uint32_t)&Reset_Handler,
-    (uint32_t)&NMI_Handler,
-    (uint32_t)&HardFault_Handler,
-    (uint32_t)&MemManage_Handler,
-    (uint32_t)&BusFault_Handler,
-    (uint32_t)&UsageFault_Handler,
-    0, // Reserved
-    0, // Reserved
-    0, // Reserved
-    0, // Reserved
-    (uint32_t)&SVCall_Handler,
-    (uint32_t)&DebugMon_Handler,
-    0, // Reserved
-    (uint32_t)&PendSV_Handler,
-    (uint32_t)&SysTick_Handler,
-    (uint32_t)&WWDG_Handler,
-    (uint32_t)&PVD_Handler,
-    (uint32_t)&TAMPER_Handler,
-    (uint32_t)&RTC_Handler,
-    (uint32_t)&FLASH_Handler,
-    (uint32_t)&RCC_Handler,
-    (uint32_t)&EXTI0_Handler,
-    (uint32_t)&EXTI1_Handler,
-    (uint32_t)&EXTI2_Handler,
-    (uint32_t)&EXTI3_Handler,
-    (uint32_t)&EXTI4_Handler,
-    (uint32_t)&DMA1_Channel1_Handler,
-    (uint32_t)&DMA1_Channel2_Handler,
-    (uint32_t)&DMA1_Channel3_Handler,
-    (uint32_t)&DMA1_Channel4_Handler,
-    (uint32_t)&DMA1_Channel5_Handler,
-    (uint32_t)&DMA1_Channel6_Handler,
-    (uint32_t)&DMA1_Channel7_Handler,
-    (uint32_t)&ADC1_2_Handler,
-    (uint32_t)&USB_HP_CAN_TX_Handler,
-    (uint32_t)&USB_LP_CAN_RX0_Handler, // Düzeltildi
-    (uint32_t)&CAN_RX1_Handler,
-    (uint32_t)&CAN_SCE_Handler,
-    (uint32_t)&EXTI9_5_Handler,
-    (uint32_t)&TIM1_BRK_Handler,
-    (uint32_t)&TIM1_UP_Handler,
-    (uint32_t)&TIM1_TRG_COM_Handler,   // Düzeltildi
-    (uint32_t)&TIM1_CC_Handler,
-    (uint32_t)&TIM2_Handler,
-    (uint32_t)&TIM3_Handler,
-    (uint32_t)&TIM4_Handler,
-    (uint32_t)&I2C1_EV_Handler,
-    (uint32_t)&I2C1_ER_Handler,
-    (uint32_t)&I2C2_EV_Handler,
-    (uint32_t)&I2C2_ER_Handler,
-    (uint32_t)&SPI1_Handler,
-    (uint32_t)&SPI2_Handler,
-    (uint32_t)&USART1_Handler,
-    (uint32_t)&USART2_Handler,
-    (uint32_t)&USART3_Handler,
-    (uint32_t)&EXTI15_10_Handler,      // Düzeltildi
-    (uint32_t)&RTCAlarm_Handler,
-    (uint32_t)&USBWakeup_Handler,
-    /* Medium Density (C8T6) burada biter ama High Density uyumluluğu için devam edilebilir: */
-    (uint32_t)&TIM8_BRK_Handler,
-    (uint32_t)&TIM8_UP_Handler,
-    (uint32_t)&TIM8_TRG_COM_Handler,
-    (uint32_t)&TIM8_CC_Handler,
-    (uint32_t)&ADC3_Handler,
-    (uint32_t)&FSMC_Handler,
-    (uint32_t)&SDIO_Handler,
-    (uint32_t)&TIM5_Handler,
-    (uint32_t)&SPI3_Handler,
-    (uint32_t)&UART4_Handler,
-    (uint32_t)&UART5_Handler,
-    (uint32_t)&TIM6_Handler,
-    (uint32_t)&TIM7_Handler,
-    (uint32_t)&DMA2_Channel1_Handler,
-    (uint32_t)&DMA2_Channel2_Handler,
-    (uint32_t)&DMA2_Channel3_Handler,
-    (uint32_t)&DMA2_Channel4_Handler, 
-    (uint32_t)&DMA2_Channel5_Handler  
+void (*const vectors[])(void) = {
+    (void (*)(void))(uintptr_t)&_estack,
+    Reset_Handler,
+    NMI_Handler,
+    HardFault_Handler,
+    MemManage_Handler,
+    BusFault_Handler,
+    UsageFault_Handler,
+    (void (*)(void))0, /* Reserved */
+    (void (*)(void))0, /* Reserved */
+    (void (*)(void))0, /* Reserved */
+    (void (*)(void))0, /* Reserved */
+    SVCall_Handler,
+    DebugMon_Handler,
+    (void (*)(void))0, /* Reserved */
+    PendSV_Handler,
+    SysTick_Handler,
+    WWDG_Handler,
+    PVD_Handler,
+    TAMPER_Handler,
+    RTC_Handler,
+    FLASH_Handler,
+    RCC_Handler,
+    EXTI0_Handler,
+    EXTI1_Handler,
+    EXTI2_Handler,
+    EXTI3_Handler,
+    EXTI4_Handler,
+    DMA1_Channel1_Handler,
+    DMA1_Channel2_Handler,
+    DMA1_Channel3_Handler,
+    DMA1_Channel4_Handler,
+    DMA1_Channel5_Handler,
+    DMA1_Channel6_Handler,
+    DMA1_Channel7_Handler,
+    ADC1_2_Handler,
+    USB_HP_CAN_TX_Handler,
+    USB_LP_CAN_RX0_Handler,
+    CAN_RX1_Handler,
+    CAN_SCE_Handler,
+    EXTI9_5_Handler,
+    TIM1_BRK_Handler,
+    TIM1_UP_Handler,
+    TIM1_TRG_COM_Handler,
+    TIM1_CC_Handler,
+    TIM2_Handler,
+    TIM3_Handler,
+    TIM4_Handler,
+    I2C1_EV_Handler,
+    I2C1_ER_Handler,
+    I2C2_EV_Handler,
+    I2C2_ER_Handler,
+    SPI1_Handler,
+    SPI2_Handler,
+    USART1_Handler,
+    USART2_Handler,
+    USART3_Handler,
+    EXTI15_10_Handler,
+    RTCAlarm_Handler,
+    USBWakeup_Handler,
+    TIM8_BRK_Handler,
+    TIM8_UP_Handler,
+    TIM8_TRG_COM_Handler,
+    TIM8_CC_Handler,
+    ADC3_Handler,
+    FSMC_Handler,
+    SDIO_Handler,
+    TIM5_Handler,
+    SPI3_Handler,
+    UART4_Handler,
+    UART5_Handler,
+    TIM6_Handler,
+    TIM7_Handler,
+    DMA2_Channel1_Handler,
+    DMA2_Channel2_Handler,
+    DMA2_Channel3_Handler,
+    DMA2_Channel4_Handler,
+    DMA2_Channel5_Handler
 };
 
 void Default_Handler(void)
