@@ -10,14 +10,15 @@
 .global init_sched_stack
 .global interrupt_disable
 .global interrupt_enable
-.global UsageFault_Handler
 
 .extern _estack
 .extern get_task_psp_value
 .extern save_psp_value
 .extern update_next_task
+.extern HardFault_Handler_c
+.extern BusFault_Handler_c
+.extern MemFault_Handler_c
 .extern UsageFault_Handler_c
-
 
 .type PendSV_Handler, %function
 PendSV_Handler:
@@ -25,18 +26,10 @@ PendSV_Handler:
     STMDB R0!, {R4-R11}
     PUSH {LR}
     BL save_psp_value
-
     BL update_next_task
     BL get_task_psp_value
-
-   
-
     LDMIA R0!, {R4-R11}
-
-   
-
     MSR PSP, R0
-
     POP {LR}
     BX LR
 
@@ -47,7 +40,6 @@ switch_sp_to_psp:
     BL get_task_psp_value
     MSR PSP, R0
     POP {LR}
-
     MRS R0, CONTROL
     ORR R0, R0, #0x2
     MSR CONTROL, R0
@@ -74,10 +66,31 @@ interrupt_enable:
     MSR PRIMASK, R0
     BX LR
 
+.type HardFault_Handler, %function
+.thumb_func
+HardFault_Handler:
+    MRS R0, PSP;
+    B HardFault_Handler_c;
+
+.type BusFault_Handler, %function
+.thumb_func
+BusFault_Handler:
+    MRS R0, PSP;
+    MRS R1, MSP
+    B BusFault_Handler_c;
+
+.type MemFault_Handler, %function
+.thumb_func
+MemFault_Handler:
+    MRS R0, PSP;
+    MRS R1, MSP
+    B MemFault_Handler_c;
+
 .type UsageFault_Handler, %function
 .thumb_func
 UsageFault_Handler:
-    MRS r0, PSP;
+    MRS R0, PSP;
+    MRS R1, MSP
     B UsageFault_Handler_c;
 
 .align 4

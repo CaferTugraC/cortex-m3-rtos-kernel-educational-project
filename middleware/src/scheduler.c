@@ -63,15 +63,20 @@ void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16
 
 void sched_init(void)
 {
-	init_processor_faults();
-	init_SysTick_timer(TICK_HZ);
+	port_set_tick_hook(&sched_tick_handler);
+	port_set_context_switch_hooks(
+		&get_task_psp_value,
+		&save_psp_value,
+		update_next_task
+	);
+
+	port_init(TICK_HZ, HSI_CLOCK);
 	init_idle_task();
 }
 
 void sched_start(void (*start_handler)(void))
 {
 	switch_sp_to_psp();
-	//init_sched_stack();
 	start_handler();
 }
 
@@ -124,6 +129,16 @@ void init_idle_task(void)
 	}
 
 	user_tasks[0].psp_value = (uintptr_t)pPSP;
+}
+void sched_tick_handler(void)
+{
+	update_global_tick_count();
+	unblock_tasks();
+}
+
+void schedule(void)
+{
+	port_trigger_context_switch();
 }
 
 void task_delay(uint32_t tick_count)
