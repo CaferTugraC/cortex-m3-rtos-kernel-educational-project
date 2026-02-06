@@ -23,4 +23,4 @@ void init_idle_task(void);
 void task_delay(uint32_t tick_count);
 
 
-#endif /* MAIN_H_ */
+#endif /* SCHEDULER_H */

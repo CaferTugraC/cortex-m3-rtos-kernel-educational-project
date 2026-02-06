@@ -11,6 +11,7 @@ extern uint32_t _la_data;
 //prototype of main
 void main(void);
 void __libc_init_array(void);
+void SystemInit(void);
 
 void Reset_Handler(void);
 void NMI_Handler(void)        __attribute__ ((weak, alias("Default_Handler")));
@@ -178,6 +179,12 @@ void Default_Handler(void)
     while(1);
 }
 
+
+__attribute__((weak)) void SystemInit(void)
+{
+    
+}
+
 void Reset_Handler(void)
 {
     // Başlangıç kodları buraya (data copy, bss zeroing vb.
@@ -198,6 +205,9 @@ void Reset_Handler(void)
     {
         *pDst++ = 0;
     }
+
+    /* Sistem saatini ve donanimi hazirla */
+    SystemInit();
 
     __libc_init_array();
 

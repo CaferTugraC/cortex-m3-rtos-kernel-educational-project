@@ -28,6 +28,12 @@ void sched_init(uint32_t clock_source)
 
 void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16_t tsk_stack_size)
 {
+  if (task_count >= MAX_TASKS)
+  {
+	  /* Hata: Maksimum task sayisina ulasildi. */
+	  return;
+  }
+
   uint32_t *p_top_of_stack = tsk_stack_addr + tsk_stack_size;
 
   user_tasks[task_count].task_handler = task_handler;
@@ -206,4 +212,3 @@ void unblock_tasks(void)
 		}
 	}
 }
-
