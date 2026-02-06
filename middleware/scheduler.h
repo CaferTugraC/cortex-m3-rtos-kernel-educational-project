@@ -8,7 +8,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-#define MAX_TASKS 5U // min 1 for idle task
+#define MAX_TASKS 3U // min 1 for idle task
 
 #define TICK_HZ 1000U
 
@@ -34,6 +34,9 @@ void task_delay(uint32_t tick_count);
 void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16_t tsk_stack_size);
 void sched_init(void);
 void sched_start(void (*task_handler)(void));
+void init_idle_task(void);
+
+extern uint32_t _estack;
 
 typedef struct
 {

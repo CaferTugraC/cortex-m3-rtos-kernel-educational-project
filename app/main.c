@@ -20,12 +20,16 @@ int main(void)
 
 void tsk_dht11_read(void)
 {
-    task_delay(1000);
-    task_delay(1000);
+    while(1)
+    {
+        task_delay(1000);
+    }
 }
 
 void tsk_i2c_lcd_write(void)
 {
-    task_delay(1000);
-    task_delay(1000);
+    while(1)
+    {
+        task_delay(1000);
+    }
 }

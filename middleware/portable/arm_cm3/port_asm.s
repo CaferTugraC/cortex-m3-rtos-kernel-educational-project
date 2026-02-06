@@ -10,11 +10,14 @@
 .global init_sched_stack
 .global interrupt_disable
 .global interrupt_enable
+.global UsageFault_Handler
 
 .extern _estack
 .extern get_task_psp_value
 .extern save_psp_value
 .extern update_next_task
+.extern UsageFault_Handler_c
+
 
 .type PendSV_Handler, %function
 PendSV_Handler:
@@ -25,8 +28,15 @@ PendSV_Handler:
 
     BL update_next_task
     BL get_task_psp_value
+
+   
+
     LDMIA R0!, {R4-R11}
+
+   
+
     MSR PSP, R0
+
     POP {LR}
     BX LR
 
@@ -60,8 +70,15 @@ interrupt_disable:
 .type interrupt_enable, %function
 .thumb_func
 interrupt_enable:
-    CPSIE i
+    MOV R0, #0x0
+    MSR PRIMASK, R0
     BX LR
+
+.type UsageFault_Handler, %function
+.thumb_func
+UsageFault_Handler:
+    MRS r0, PSP;
+    B UsageFault_Handler_c;
 
 .align 4
 .end

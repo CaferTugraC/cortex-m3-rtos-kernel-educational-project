@@ -67,7 +67,10 @@ void MemFault_Handler(void)
     
 }
 
-void UsageFault_Handler(void)
+void UsageFault_Handler_c(uint32_t *pBaseStackFrame)
 {
-    
+    while(1)
+    {
+      
+    }
 }

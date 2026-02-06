@@ -4,17 +4,18 @@
 #include "scheduler.h"
 #include "port.h"
 
-static uint8_t task_count = 0U;
+static uint8_t task_count = 1U;
 static uint8_t  current_task = 1; // task1 is running
 static uint32_t g_tick_count = 0;
 
+uint32_t stack_idle_task[128];
 
 static TCB_t user_tasks[MAX_TASKS];
 
 
 void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16_t tsk_stack_size)
 {
-  uint32_t *p_top_of_stack = &tsk_stack_addr[tsk_stack_size];
+  uint32_t *p_top_of_stack = tsk_stack_addr + tsk_stack_size;
 
   user_tasks[task_count].task_handler = task_handler;
   user_tasks[task_count].current_state = TASK_READY_STATE;
@@ -22,16 +23,34 @@ void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16
 
   uint32_t *pPSP = p_top_of_stack;
 
+  // ARM Cortex-M3 stack frame sırası (hardware tarafından push edilenler):
+  // R0-R3, R12, LR, PC, xPSR
+  
+  // xPSR (Program Status Register)
   pPSP--;
   *pPSP = DUMMY_XPSR;	// 0x01000000U
 
+  // PC (Program Counter)
   pPSP--;
-  // cppcheck-suppress misra-c2012-11.4	
   *pPSP = (uint32_t)(uintptr_t)user_tasks[task_count].task_handler;	// PC value
 
+  // LR (Link Register)
   pPSP--;
   *pPSP = DUMMY_LR;	// LR value
-  for(uint8_t j = 0U; j < 13U; j++)
+
+  // R12
+  pPSP--;
+  *pPSP = 0U;
+
+  // R3-R0 (4 registers)
+  for(uint8_t j = 0U; j < 4U; j++)
+  {
+	pPSP--;
+	*pPSP = 0U;
+  }
+
+  // R11-R4 (8 registers - non-volatile, saved by software in PendSV)
+  for(uint8_t j = 0U; j < 8U; j++)
   {
 	pPSP--;
 	*pPSP = 0U;
@@ -46,12 +65,13 @@ void sched_init(void)
 {
 	init_processor_faults();
 	init_SysTick_timer(TICK_HZ);
+	init_idle_task();
 }
 
 void sched_start(void (*start_handler)(void))
 {
 	switch_sp_to_psp();
-	init_sched_stack();
+	//init_sched_stack();
 	start_handler();
 }
 
@@ -64,6 +84,47 @@ void idle_task_handler(void)
 }
 
 /* USEFUL FUNCTIONS START */
+void init_idle_task(void)
+{
+	user_tasks[0].task_handler = &idle_task_handler;
+	uint32_t *p_top_of_stack = &stack_idle_task[128];
+	
+	user_tasks[0].current_state = TASK_READY_STATE;
+	user_tasks[0].block_count = 0;
+
+	uint32_t *pPSP = p_top_of_stack;
+
+	pPSP--;
+  	*pPSP = DUMMY_XPSR;	// 0x01000000U
+
+  	// PC (Program Counter)
+  	pPSP--;
+  	*pPSP = (uint32_t)(uintptr_t)user_tasks[0].task_handler;	// PC value
+
+  	// LR (Link Register)
+  	pPSP--;
+  	*pPSP = DUMMY_LR;	// LR value
+
+  	// R12
+  	pPSP--;
+  	*pPSP = 0U;
+
+  // R3-R0 (4 registers)
+  	for(uint8_t j = 0U; j < 4U; j++)
+  	{
+		pPSP--;
+		*pPSP = 0U;
+  	}
+
+	// R11-R4 (8 registers - non-volatile, saved by software in PendSV)
+	for(uint8_t j = 0U; j < 8U; j++)
+	{
+		pPSP--;
+		*pPSP = 0U;
+	}
+
+	user_tasks[0].psp_value = (uintptr_t)pPSP;
+}
 
 void task_delay(uint32_t tick_count)
 {
