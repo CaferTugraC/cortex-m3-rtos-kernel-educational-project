@@ -1,6 +1,4 @@
 #include <stdint.h>
-#include <stdio.h>
-
 #include "scheduler.h"
 #include "port.h"
 
