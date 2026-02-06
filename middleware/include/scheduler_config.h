@@ -1,0 +1,7 @@
+#ifndef SCHEDULER_CONFIG_H
+#define SCHEDULER_CONFIG_H
+
+#define MAX_TASKS 3U
+#define TICK_HZ 1000U
+
+#endif

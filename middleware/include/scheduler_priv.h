@@ -1,6 +1,8 @@
 #ifndef SCHEDULER_PRIV_H
 #define SCHEDULER_PRIV_H
 
+#include "scheduler_config.h"
+
 // private API
 void idle_task_handler(void);
 void init_task_stack(void);
@@ -9,7 +11,6 @@ void update_next_task(void);
 void update_global_tick_count(void);
 void unblock_tasks(void);
 uint32_t get_task_psp_value(void);
-void task_delay(uint32_t tick_count);
 void sched_tick_handler(void);
 void schedule(void);
 

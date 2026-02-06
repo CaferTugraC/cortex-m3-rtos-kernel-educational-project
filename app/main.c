@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "scheduler.h"
+#include "bsp_stm32f103c8t6.h"
 
 void tsk_dht11_read(void);
 void tsk_i2c_lcd_write(void);
@@ -9,7 +10,7 @@ static uint32_t stack_array_tsk_i2c_lcd_write[256];
 
 int main(void)
 {
-    sched_init();
+    sched_init(HSI_CLOCK);
 
     sched_add_task(&tsk_dht11_read, &stack_array_tsk_dht11_read[0], 128);
     sched_add_task(&tsk_i2c_lcd_write, &stack_array_tsk_i2c_lcd_write[0], 256);

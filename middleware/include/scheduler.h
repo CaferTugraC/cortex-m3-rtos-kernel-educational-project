@@ -8,16 +8,7 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-#define MAX_TASKS 3U // min 1 for idle task
-
-#define TICK_HZ 1000U
-
-#define HSI_CLOCK               8000000U
-#define SYSTICK_TIM_CLK         HSI_CLOCK
-
-// Task first stack values
-#define DUMMY_XPSR 				0x01000000U
-#define DUMMY_LR          0xFFFFFFFDU
+#include <stdint.h>
 
 // Task states
 #define TASK_READY_STATE 0x00
@@ -26,9 +17,10 @@
 
 // gloabal API
 void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16_t tsk_stack_size);
-void sched_init(void);
+void sched_init(uint32_t clock_source);
 void sched_start(void (*task_handler)(void));
 void init_idle_task(void);
+void task_delay(uint32_t tick_count);
 
 
 #endif /* MAIN_H_ */

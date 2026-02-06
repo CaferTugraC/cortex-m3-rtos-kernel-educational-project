@@ -28,5 +28,7 @@ extern void PendSV_Handler(void);
 extern void interrupt_disable(void);
 extern void interrupt_enable(void);
 
+#define DUMMY_XPSR 		  0x01000000U
+#define DUMMY_LR          0xFFFFFFFDU
 
 #endif

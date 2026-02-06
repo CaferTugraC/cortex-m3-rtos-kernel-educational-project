@@ -13,7 +13,7 @@ uint32_t stack_idle_task[128];
 static TCB_t user_tasks[MAX_TASKS];
 
 
-void sched_init(void)
+void sched_init(uint32_t clock_source)
 {
 	port_set_tick_hook(&sched_tick_handler);
 	port_set_context_switch_hooks(
@@ -22,7 +22,7 @@ void sched_init(void)
 		update_next_task
 	);
 
-	port_init(TICK_HZ, HSI_CLOCK);
+	port_init(TICK_HZ, clock_source);
 	init_idle_task();
 }
 

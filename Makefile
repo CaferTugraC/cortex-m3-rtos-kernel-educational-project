@@ -19,13 +19,14 @@ BSP_DIR        = $(PROJECT_DIR)/bsp/stm32f103c8t6
 DRIVERS_DIR    = $(PROJECT_DIR)/drivers
 BUILD_DIR      = $(PROJECT_DIR)/build
 
-LDSCRIPT = $(BSP_DIR)/stm32f03c8t6_linker_script.ld
+LDSCRIPT = $(BSP_DIR)/stm32f103c8t6_linker_script.ld
 
 # Include Yolları
 INCLUDES = -I$(APP_DIR) \
            -I$(MIDDLEWARE_DIR)/include \
            -I$(PORT_DIR) \
-           -I$(DRIVERS_DIR)
+           -I$(DRIVERS_DIR) \
+           -I$(BSP_DIR)
 
 # Kaynak Dosyaları Otomatik Bulma
 SRCS = $(wildcard $(APP_DIR)/*.c) \
@@ -41,7 +42,7 @@ OBJS = $(SRCS:%.c=$(BUILD_DIR)/%.o)
 OBJS += $(ASMS:%.s=$(BUILD_DIR)/%.o)
 
 # Dosyaları bulabilmesi için VPATH tanımlıyoruz
-VPATH = $(APP_DIR):$(MIDDLEWARE_DIR):$(PORT_DIR):$(DRIVERS_DIR):$(BSP_DIR)
+VPATH = $(APP_DIR):$(MIDDLEWARE_DIR)/include:$(MIDDLEWARE_DIR)/src:$(PORT_DIR):$(DRIVERS_DIR):$(BSP_DIR)
 
 # Varsayılan Hedef (Tüm projeyi derle)
 all: $(BUILD_DIR)/final.elf $(BUILD_DIR)/final.bin
