@@ -1,15 +1,30 @@
 #include <stdint.h>
 #include "scheduler.h"
+#include "scheduler_priv.h"
 #include "port.h"
 
 static uint8_t task_count = 1U;
 static uint8_t  current_task = 1; // task1 is running
 static uint32_t g_tick_count = 0;
 
-uint32_t stack_idle_task[128];
+extern uint32_t _estack;
 
+uint32_t stack_idle_task[128];
 static TCB_t user_tasks[MAX_TASKS];
 
+
+void sched_init(void)
+{
+	port_set_tick_hook(&sched_tick_handler);
+	port_set_context_switch_hooks(
+		&get_task_psp_value,
+		&save_psp_value,
+		update_next_task
+	);
+
+	port_init(TICK_HZ, HSI_CLOCK);
+	init_idle_task();
+}
 
 void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16_t tsk_stack_size)
 {
@@ -56,20 +71,6 @@ void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16
 
   user_tasks[task_count].psp_value = (uintptr_t)pPSP;
   task_count++;
-}
-
-
-void sched_init(void)
-{
-	port_set_tick_hook(&sched_tick_handler);
-	port_set_context_switch_hooks(
-		&get_task_psp_value,
-		&save_psp_value,
-		update_next_task
-	);
-
-	port_init(TICK_HZ, HSI_CLOCK);
-	init_idle_task();
 }
 
 void sched_start(void (*start_handler)(void))
@@ -205,33 +206,4 @@ void unblock_tasks(void)
 		}
 	}
 }
-
-// void init_task_stack(void)
-// {
-  
-
-//   for(int i = 0 ; i < MAX_TASKS ; i++)
-//   {
-// 	uint32_t *pPSP;
-
-//     pPSP = user_tasks[i].psp_value;
-
-//     pPSP--;
-//     *pPSP = DUMMY_XPSR; // 0x01000000
-
-//     pPSP--;
-//     *pPSP = (uint32_t)user_tasks[i].task_handler; // PC value
-
-//     pPSP--;
-//     *pPSP = DUMMY_LR; // LR value
-
-//     for(int j = 0; j < 13; j++)
-//     {
-//     	pPSP--;
-//     	*pPSP = 0;
-//     }
-
-//     user_tasks[i].psp_value = (uintptr_t)pPSP;
-//   }
-// }
 

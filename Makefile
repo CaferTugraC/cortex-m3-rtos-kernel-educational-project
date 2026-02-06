@@ -23,13 +23,13 @@ LDSCRIPT = $(BSP_DIR)/stm32f03c8t6_linker_script.ld
 
 # Include Yolları
 INCLUDES = -I$(APP_DIR) \
-           -I$(MIDDLEWARE_DIR) \
+           -I$(MIDDLEWARE_DIR)/include \
            -I$(PORT_DIR) \
            -I$(DRIVERS_DIR)
 
 # Kaynak Dosyaları Otomatik Bulma
 SRCS = $(wildcard $(APP_DIR)/*.c) \
-       $(wildcard $(MIDDLEWARE_DIR)/*.c) \
+       $(wildcard $(MIDDLEWARE_DIR)/src/*.c) \
        $(wildcard $(PORT_DIR)/*.c) \
        $(wildcard $(DRIVERS_DIR)/*.c) \
        $(wildcard $(BSP_DIR)/*.c)
