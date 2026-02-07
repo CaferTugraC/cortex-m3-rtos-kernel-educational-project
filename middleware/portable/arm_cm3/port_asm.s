@@ -6,6 +6,10 @@
 .section .text
 
 .global PendSV_Handler
+.global HardFault_Handler
+.global BusFault_Handler
+.global MemFault_Handler
+.global UsageFault_Handler
 .global switch_sp_to_psp
 .global init_sched_stack
 .global interrupt_disable
@@ -73,7 +77,7 @@ HardFault_Handler:
     ITE EQ;
     MRSEQ R0, MSP;
     MRSNE R0, PSP;
-    B hard_fault_handler_c;
+    B HardFault_Handler_c;
 
 .type BusFault_Handler, %function
 .thumb_func

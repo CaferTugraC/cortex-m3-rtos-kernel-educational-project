@@ -6,6 +6,8 @@ static PortTickHook_t tick_hook_fn = NULL;
 static GetPspFn_t get_psp_fn = NULL;
 static SavePspFn_t save_psp_fn = NULL;
 static UpdateTaskFn_t update_task_fn = NULL;
+static CheckStackOverflowFn_t check_stack_overflow_fn = NULL;
+
 
 // Hook kayıt fonksiyonları
 void port_set_tick_hook(PortTickHook_t hook)
@@ -13,9 +15,10 @@ void port_set_tick_hook(PortTickHook_t hook)
     tick_hook_fn = hook;
 }
 
-void port_set_context_switch_hooks(GetPspFn_t get_psp, SavePspFn_t save_psp, UpdateTaskFn_t update_task)
+void port_set_context_switch_hooks(GetPspFn_t get_psp, CheckStackOverflowFn_t check_stack_overflow, SavePspFn_t save_psp, UpdateTaskFn_t update_task)
 {
   get_psp_fn = get_psp;
+  check_stack_overflow_fn = check_stack_overflow;
   save_psp_fn = save_psp;
   update_task_fn = update_task;
 }
@@ -70,7 +73,11 @@ void SysTick_Handler(void)
     tick_hook_fn();
   }
 
-	// pend the pendSV exception
+  if(check_stack_overflow_fn() != 0)
+  {
+    return;
+  }
+
 	port_trigger_context_switch();
 }
 

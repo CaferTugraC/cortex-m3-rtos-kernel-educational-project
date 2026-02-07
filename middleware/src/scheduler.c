@@ -18,8 +18,9 @@ void sched_init(uint32_t clock_source)
 	port_set_tick_hook(&sched_tick_handler);
 	port_set_context_switch_hooks(
 		&get_task_psp_value,
+		&check_task_stack_overflow,
 		&save_psp_value,
-		update_next_task
+		&update_next_task
 	);
 
 	port_init(TICK_HZ, clock_source);
@@ -30,9 +31,13 @@ void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16
 {
   if (task_count >= MAX_TASKS)
   {
-	  /* Hata: Maksimum task sayisina ulasildi. */
+	  /* Error: reached max task value. */
 	  return;
   }
+  // set STACK_END_VALUE to end of stack for stackowerflow protection.
+  tsk_stack_addr[15U] = STACK_END_VALUE;
+  user_tasks[task_count].stack_limit = &tsk_stack_addr[15U];
+
 
   uint32_t *p_top_of_stack = tsk_stack_addr + tsk_stack_size;
 
@@ -42,7 +47,7 @@ void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16
 
   uint32_t *pPSP = p_top_of_stack;
 
-  // ARM Cortex-M3 stack frame sırası (hardware tarafından push edilenler):
+  // ARM Cortex-M3 stack frame:
   // R0-R3, R12, LR, PC, xPSR
   
   // xPSR (Program Status Register)
@@ -93,48 +98,9 @@ void idle_task_handler(void)
 	}
 }
 
-/* USEFUL FUNCTIONS START */
 void init_idle_task(void)
 {
 	sched_add_task(&idle_task_handler, &stack_idle_task[0], 128);
-// 	user_tasks[0].task_handler = &idle_task_handler;
-// 	uint32_t *p_top_of_stack = &stack_idle_task[128];
-	
-// 	user_tasks[0].current_state = TASK_READY_STATE;
-// 	user_tasks[0].block_count = 0;
-
-// 	uint32_t *pPSP = p_top_of_stack;
-
-// 	pPSP--;
-//   	*pPSP = DUMMY_XPSR;	// 0x01000000U
-
-//   	// PC (Program Counter)
-//   	pPSP--;
-//   	*pPSP = (uint32_t)(uintptr_t)user_tasks[0].task_handler;	// PC value
-
-//   	// LR (Link Register)
-//   	pPSP--;
-//   	*pPSP = DUMMY_LR;	// LR value
-
-//   	// R12
-//   	pPSP--;
-//   	*pPSP = 0U;
-
-//   // R3-R0 (4 registers)
-//   	for(uint8_t j = 0U; j < 4U; j++)
-//   	{
-// 		pPSP--;
-// 		*pPSP = 0U;
-//   	}
-
-// 	// R11-R4 (8 registers - non-volatile, saved by software in PendSV)
-// 	for(uint8_t j = 0U; j < 8U; j++)
-// 	{
-// 		pPSP--;
-// 		*pPSP = 0U;
-// 	}
-
-// 	user_tasks[0].psp_value = (uintptr_t)pPSP;
 }
 void sched_tick_handler(void)
 {
@@ -144,10 +110,15 @@ void sched_tick_handler(void)
 
 void schedule(void)
 {
+	if(check_task_stack_overflow() != 0)
+	{
+		return;
+	}
+	
 	port_trigger_context_switch();
 }
 
-void task_delay(uint32_t tick_count)
+void task_delay_tick(uint32_t tick_count)
 {
 	// disable interrupt
 	interrupt_disable();
@@ -163,9 +134,26 @@ void task_delay(uint32_t tick_count)
 	interrupt_enable();
 }
 
+void task_delay_ms(uint32_t ms)
+{
+	task_delay_tick(ms / TICK_HZ);
+}
+
 uint32_t get_task_psp_value(void)
 {
   return user_tasks[current_task].psp_value;
+}
+
+uint32_t check_task_stack_overflow(void)
+{
+	uint32_t *pStack = (uint32_t*)user_tasks[current_task].stack_limit;
+
+	if(*pStack != STACK_END_VALUE || (uint32_t)pStack > user_tasks[current_task].psp_value)
+	{
+		__asm volatile("BL UsageFault_Handler");
+		return 1; // stack owerflow danger!
+	}
+	return 0;
 }
 
 void save_psp_value(uint32_t current_psp_value)
@@ -192,7 +180,6 @@ void update_next_task(void)
 	{
 		current_task = 0;
 	}
-
 }
 
 void update_global_tick_count(void)

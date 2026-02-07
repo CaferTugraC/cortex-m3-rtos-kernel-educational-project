@@ -2,6 +2,8 @@
 #include "scheduler.h"
 #include "bsp_stm32f103c8t6.h"
 
+// #include "scheduler_priv.h" // debug 
+
 void tsk_dht11_read(void);
 void tsk_i2c_lcd_write(void);
 
@@ -23,7 +25,23 @@ void tsk_dht11_read(void)
 {
     while(1)
     {
-        task_delay(1000);
+        // DEBUG - TEST CHECK OVERFLOW FUNCTİON
+        // if(check_task_stack_overflow() == 0U)
+        // {
+        //     uint32_t test_stack_overflow_array[10];
+        //     for(uint32_t i = 0U; i < 10U; i++)
+        //     {
+        //         test_stack_overflow_array[i] = 0xCACACACAUL;
+        //     }
+
+        //     tsk_dht11_read();
+        // }
+        // else
+        // {
+        //     while(1);
+        // }
+
+        task_delay_tick(1000);
     }
 }
 
@@ -31,6 +49,6 @@ void tsk_i2c_lcd_write(void)
 {
     while(1)
     {
-        task_delay(1000);
+        task_delay_tick(1000);
     }
 }

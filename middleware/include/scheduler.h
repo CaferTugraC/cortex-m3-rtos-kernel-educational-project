@@ -20,7 +20,8 @@ void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16
 void sched_init(uint32_t clock_source);
 void sched_start(void (*task_handler)(void));
 void init_idle_task(void);
-void task_delay(uint32_t tick_count);
+void task_delay_tick(uint32_t tick_count);
+void task_delay_ms(uint32_t ms);
 
 
 #endif /* SCHEDULER_H */

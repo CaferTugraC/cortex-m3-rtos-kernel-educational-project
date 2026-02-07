@@ -2,6 +2,9 @@
 #define SCHEDULER_PRIV_H
 
 #include "scheduler_config.h"
+#include <stdint.h>
+
+#define STACK_END_VALUE 0xDEADBEEFU
 
 // private API
 void idle_task_handler(void);
@@ -11,6 +14,7 @@ void update_next_task(void);
 void update_global_tick_count(void);
 void unblock_tasks(void);
 uint32_t get_task_psp_value(void);
+uint32_t check_task_stack_overflow(void);
 void sched_tick_handler(void);
 void schedule(void);
 
@@ -19,6 +23,7 @@ void schedule(void);
 typedef struct
 {
   uintptr_t psp_value;
+  uint32_t *stack_limit;
   uint32_t block_count;
   uint8_t current_state;
   void (*task_handler)(void);
