@@ -3,7 +3,7 @@
 #include "scheduler_priv.h"
 #include "port.h"
 
-static uint8_t task_count = 1U;
+static uint8_t task_count = 0U;
 static uint8_t  current_task = 1; // task1 is running
 static uint32_t g_tick_count = 0;
 
@@ -96,44 +96,45 @@ void idle_task_handler(void)
 /* USEFUL FUNCTIONS START */
 void init_idle_task(void)
 {
-	user_tasks[0].task_handler = &idle_task_handler;
-	uint32_t *p_top_of_stack = &stack_idle_task[128];
+	sched_add_task(&idle_task_handler, &stack_idle_task[0], 128);
+// 	user_tasks[0].task_handler = &idle_task_handler;
+// 	uint32_t *p_top_of_stack = &stack_idle_task[128];
 	
-	user_tasks[0].current_state = TASK_READY_STATE;
-	user_tasks[0].block_count = 0;
+// 	user_tasks[0].current_state = TASK_READY_STATE;
+// 	user_tasks[0].block_count = 0;
 
-	uint32_t *pPSP = p_top_of_stack;
+// 	uint32_t *pPSP = p_top_of_stack;
 
-	pPSP--;
-  	*pPSP = DUMMY_XPSR;	// 0x01000000U
+// 	pPSP--;
+//   	*pPSP = DUMMY_XPSR;	// 0x01000000U
 
-  	// PC (Program Counter)
-  	pPSP--;
-  	*pPSP = (uint32_t)(uintptr_t)user_tasks[0].task_handler;	// PC value
+//   	// PC (Program Counter)
+//   	pPSP--;
+//   	*pPSP = (uint32_t)(uintptr_t)user_tasks[0].task_handler;	// PC value
 
-  	// LR (Link Register)
-  	pPSP--;
-  	*pPSP = DUMMY_LR;	// LR value
+//   	// LR (Link Register)
+//   	pPSP--;
+//   	*pPSP = DUMMY_LR;	// LR value
 
-  	// R12
-  	pPSP--;
-  	*pPSP = 0U;
+//   	// R12
+//   	pPSP--;
+//   	*pPSP = 0U;
 
-  // R3-R0 (4 registers)
-  	for(uint8_t j = 0U; j < 4U; j++)
-  	{
-		pPSP--;
-		*pPSP = 0U;
-  	}
+//   // R3-R0 (4 registers)
+//   	for(uint8_t j = 0U; j < 4U; j++)
+//   	{
+// 		pPSP--;
+// 		*pPSP = 0U;
+//   	}
 
-	// R11-R4 (8 registers - non-volatile, saved by software in PendSV)
-	for(uint8_t j = 0U; j < 8U; j++)
-	{
-		pPSP--;
-		*pPSP = 0U;
-	}
+// 	// R11-R4 (8 registers - non-volatile, saved by software in PendSV)
+// 	for(uint8_t j = 0U; j < 8U; j++)
+// 	{
+// 		pPSP--;
+// 		*pPSP = 0U;
+// 	}
 
-	user_tasks[0].psp_value = (uintptr_t)pPSP;
+// 	user_tasks[0].psp_value = (uintptr_t)pPSP;
 }
 void sched_tick_handler(void)
 {

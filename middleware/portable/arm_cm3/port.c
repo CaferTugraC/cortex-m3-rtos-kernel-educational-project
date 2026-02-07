@@ -76,7 +76,7 @@ void SysTick_Handler(void)
 
 // fault handlers
 
-void HardFault_Handler_c(uint32_t *pBasePspStackFrame, uint32_t *pBaseMspStackFrame)
+void HardFault_Handler_c(uint32_t *pBaseStackFrame)
 {
   while(1)
     {
@@ -84,7 +84,7 @@ void HardFault_Handler_c(uint32_t *pBasePspStackFrame, uint32_t *pBaseMspStackFr
     }
 }
 
-void BusFault_Handler_c(uint32_t *pBasePspStackFrame, uint32_t *pBaseMspStackFrame)
+void BusFault_Handler_c(uint32_t *pBaseStackFrame)
 {
     while(1)
     {
@@ -92,7 +92,7 @@ void BusFault_Handler_c(uint32_t *pBasePspStackFrame, uint32_t *pBaseMspStackFra
     }
 }
 
-void MemFault_Handler_c(uint32_t *pBasePspStackFrame, uint32_t *pBaseMspStackFrame)
+void MemFault_Handler_c(uint32_t *pBaseStackFrame)
 {
     while(1)
     {
@@ -100,7 +100,7 @@ void MemFault_Handler_c(uint32_t *pBasePspStackFrame, uint32_t *pBaseMspStackFra
     }
 }
 
-void UsageFault_Handler_c(uint32_t *pBasePspStackFrame, uint32_t *pBaseMspStackFrame)
+void UsageFault_Handler_c(uint32_t *pBaseStackFrame)
 {
     while(1)
     {

@@ -69,28 +69,37 @@ interrupt_enable:
 .type HardFault_Handler, %function
 .thumb_func
 HardFault_Handler:
-    MRS R0, PSP;
-    B HardFault_Handler_c;
+    TST LR, #4;
+    ITE EQ;
+    MRSEQ R0, MSP;
+    MRSNE R0, PSP;
+    B hard_fault_handler_c;
 
 .type BusFault_Handler, %function
 .thumb_func
 BusFault_Handler:
-    MRS R0, PSP;
-    MRS R1, MSP
+    TST LR, #4;
+    ITE EQ;
+    MRSEQ R0, MSP;
+    MRSNE R0, PSP;
     B BusFault_Handler_c;
 
 .type MemFault_Handler, %function
 .thumb_func
 MemFault_Handler:
-    MRS R0, PSP;
-    MRS R1, MSP
+    TST LR, #4;
+    ITE EQ;
+    MRSEQ R0, MSP;
+    MRSNE R0, PSP;
     B MemFault_Handler_c;
 
 .type UsageFault_Handler, %function
 .thumb_func
 UsageFault_Handler:
-    MRS R0, PSP;
-    MRS R1, MSP
+    TST LR, #4;
+    ITE EQ;
+    MRSEQ R0, MSP;
+    MRSNE R0, PSP;
     B UsageFault_Handler_c;
 
 .align 4
