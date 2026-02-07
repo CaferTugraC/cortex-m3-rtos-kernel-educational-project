@@ -3,6 +3,8 @@
 
 #define MAX_TASKS 3U
 #define TICK_HZ 1000U
+#define CONFIG_MAX_TICK_HZ 5000U
 
+#define MIN_STACK_SIZE 64U
 
 #endif

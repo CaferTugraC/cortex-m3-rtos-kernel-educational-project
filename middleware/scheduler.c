@@ -3,9 +3,9 @@
 #include "port.h"
 
 
-static uint8_t task_count = 0U;
-static uint8_t  current_task = 1; // task1 is running
-static uint32_t g_tick_count = 0;
+static volatile uint8_t task_count = 0U;
+static volatile uint8_t  current_task = 1; // task1 is running
+static volatile uint32_t g_tick_count = 0;
 
 extern uint32_t _estack;
 

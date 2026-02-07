@@ -12,8 +12,7 @@
 #include <stddef.h>
 #include "return_enum.h"
 
-#define CONFIG_MAX_TICK_HZ 5000U
-#define MIN_STACK_SIZE 64U
+
 #define MIN_STACK_FRAME_SIZE 16U  // 16 words (R0-R3, R4-R11, R12, LR, PC, xPSR), do not change, its critical for safe of stack overflow
 
 

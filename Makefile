@@ -14,7 +14,7 @@ LDFLAGS    = -mcpu=$(TARGET_CPU) -mthumb --specs=nosys.specs -T$(LDSCRIPT) -Wl,-
 PROJECT_DIR    = .
 APP_DIR        = $(PROJECT_DIR)/app
 MIDDLEWARE_DIR = $(PROJECT_DIR)/middleware
-COMMON_DIR = $(PROJECT_DIR)/common
+COMMON_DIR	   = $(PROJECT_DIR)/common
 PORT_DIR       = $(MIDDLEWARE_DIR)/portable/arm_cm3
 BSP_DIR        = $(PROJECT_DIR)/bsp/stm32f103c8t6
 DRIVERS_DIR    = $(PROJECT_DIR)/drivers
