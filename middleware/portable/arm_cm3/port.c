@@ -30,11 +30,10 @@ void port_trigger_context_switch(void)
 	*pICSR |= (1UL << 28);
 }
 
-void port_init(uint32_t tick_hz, uint32_t cpu_clock)
+System_Status_t port_init(uint32_t tick_hz, uint32_t cpu_clock)
 {
   init_processor_faults();
-  init_SysTick_timer(tick_hz, cpu_clock);
-
+  return init_SysTick_timer(tick_hz, cpu_clock);
 }
 
 void init_processor_faults(void)
@@ -46,17 +45,22 @@ void init_processor_faults(void)
   *pSHCSR |= (1UL << 18);
 }
 
-void init_SysTick_timer(uint32_t tick_hz, uint32_t cpu_clock)
+System_Status_t init_SysTick_timer(uint32_t tick_hz, uint32_t cpu_clock)
 {
+  if (tick_hz == 0U || cpu_clock == 0U) return INVALID_PARAM;
+  if(tick_hz > CONFIG_MAX_TICK_HZ) return INVALID_PARAM;
+
   uint32_t *pSYST_CSRV = (uint32_t*)0xE000E010U;
   uint32_t *pSYST_RVR = (uint32_t*)0xE000E014U;
 
   // disable counter
   *pSYST_CSRV &= ~(1UL);
 
-  uint32_t count_value = (cpu_clock / tick_hz) - 1; // 1000khz, 8000000U is clock source value
+  uint32_t reload_value = (cpu_clock / tick_hz) - 1;
+  if (reload_value > 0x00FFFFFFU) return INVALID_PARAM;
+
   *pSYST_RVR &= ~(0x00FFFFFFFF);
-  *pSYST_RVR |= count_value;
+  *pSYST_RVR |= reload_value;
 
   // enable systick exception
   *pSYST_CSRV |= (1UL << 1);
@@ -64,14 +68,13 @@ void init_SysTick_timer(uint32_t tick_hz, uint32_t cpu_clock)
   *pSYST_CSRV |= (1UL << 2);
   // enable counter
   *pSYST_CSRV |= (1UL << 0);
+  
+  return OK;
 }
 
-void SysTick_Handler(void)
+void SysTick_Handler(void) // geri dönüş değeri problemi çözülecek
 {
-	if(tick_hook_fn != NULL)
-  {
-    tick_hook_fn();
-  }
+	if(tick_hook_fn != NULL)  tick_hook_fn();
 
   if(check_stack_overflow_fn() != 0)
   {

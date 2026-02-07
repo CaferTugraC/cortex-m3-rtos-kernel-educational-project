@@ -1,7 +1,7 @@
-#include <stdint.h>
 #include "scheduler.h"
 #include "scheduler_priv.h"
 #include "port.h"
+
 
 static uint8_t task_count = 0U;
 static uint8_t  current_task = 1; // task1 is running
@@ -13,8 +13,9 @@ uint32_t stack_idle_task[128];
 static TCB_t user_tasks[MAX_TASKS];
 
 
-void sched_init(uint32_t clock_source)
+System_Status_t sched_init(uint32_t clock_source)
 {
+	if (clock_source == 0U) return INVALID_PARAM;
 	port_set_tick_hook(&sched_tick_handler);
 	port_set_context_switch_hooks(
 		&get_task_psp_value,
@@ -23,20 +24,24 @@ void sched_init(uint32_t clock_source)
 		&update_next_task
 	);
 
-	port_init(TICK_HZ, clock_source);
-	init_idle_task();
+	if(port_init(TICK_HZ, clock_source) == ERROR_INIT) return ERROR_INIT;
+	
+	return init_idle_task();
 }
 
-void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16_t tsk_stack_size)
+System_Status_t sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16_t tsk_stack_size)
 {
   if (task_count >= MAX_TASKS)
   {
 	  /* Error: reached max task value. */
-	  return;
+	  return REACHED_MAX_TASK;
   }
+  if (task_handler == NULL || tsk_stack_addr == NULL) return INVALID_PARAM;
+  if (tsk_stack_size < MIN_STACK_SIZE) return INVALID_PARAM;
+
   // set STACK_END_VALUE to end of stack for stackowerflow protection.
-  tsk_stack_addr[15U] = STACK_END_VALUE;
-  user_tasks[task_count].stack_limit = &tsk_stack_addr[15U];
+  tsk_stack_addr[MIN_STACK_FRAME_SIZE] = STACK_END_VALUE;
+  user_tasks[task_count].stack_limit = &tsk_stack_addr[MIN_STACK_FRAME_SIZE];
 
 
   uint32_t *p_top_of_stack = tsk_stack_addr + tsk_stack_size;
@@ -82,6 +87,7 @@ void sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16
 
   user_tasks[task_count].psp_value = (uintptr_t)pPSP;
   task_count++;
+  return OK;
 }
 
 void sched_start(void (*start_handler)(void))
@@ -98,21 +104,22 @@ void idle_task_handler(void)
 	}
 }
 
-void init_idle_task(void)
+System_Status_t init_idle_task(void)
 {
-	sched_add_task(&idle_task_handler, &stack_idle_task[0], 128);
+	return sched_add_task(&idle_task_handler, &stack_idle_task[0], 128);
 }
+
 void sched_tick_handler(void)
 {
 	update_global_tick_count();
 	unblock_tasks();
 }
 
-void schedule(void)
+System_Status_t schedule(void)
 {
 	if(check_task_stack_overflow() != 0)
 	{
-		return;
+		return ERROR_STACK_OVERFLOW;
 	}
 	
 	port_trigger_context_switch();
@@ -136,7 +143,7 @@ void task_delay_tick(uint32_t tick_count)
 
 void task_delay_ms(uint32_t ms)
 {
-	task_delay_tick(ms / TICK_HZ);
+	task_delay_tick((ms * TICK_HZ) / 1000U);
 }
 
 uint32_t get_task_psp_value(void)
@@ -144,16 +151,16 @@ uint32_t get_task_psp_value(void)
   return user_tasks[current_task].psp_value;
 }
 
-uint32_t check_task_stack_overflow(void)
+System_Status_t check_task_stack_overflow(void)
 {
 	uint32_t *pStack = (uint32_t*)user_tasks[current_task].stack_limit;
 
 	if(*pStack != STACK_END_VALUE || (uint32_t)pStack > user_tasks[current_task].psp_value)
 	{
 		__asm volatile("BL UsageFault_Handler");
-		return 1; // stack owerflow danger!
+		return ERROR_STACK_OVERFLOW; // stack owerflow danger!
 	}
-	return 0;
+	return OK;
 }
 
 void save_psp_value(uint32_t current_psp_value)

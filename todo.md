@@ -1,14 +1,16 @@
 ## To Do
-- error handling
+- error handling - error handlings has two sides one of them is must be implemented into rtos, and if error has been occured in rtos then user must be informed about it.
+
 - logging
-- stack owerfow guard
 
+- stack owerfow guard note: added for switch contexting, but not for inside the tasks
 
-## Fix Immediate
-- task_delay parametrelerini açılayıcı yap ms tick diye ayır
-- sched start parametresi iş yapmıyor kontrol et
+- doxygen documentation
 
+- impelent drivers 
 
+## First Things
+  - add retunr values to funcitons and create enum for return values
 
 GitHub Copilot: Read [](file:///run/media/tura/Ventoy/VSCode/Workspace/stm32f103/README.md)
 
@@ -17,10 +19,10 @@ GitHub Copilot: Read [](file:///run/media/tura/Ventoy/VSCode/Workspace/stm32f103
   ## 🔴 **KRİTİK (Bu olmadan sistem çalışmaz/tehlikeli)**
 
   ### 1. **Task Delay Birim Standardizasyonu**
-  - [ ] `task_delay_ms(uint32_t ms)` - Milisaniye cinsinden
-  - [ ] `task_delay_ticks(uint32_t ticks)` - Tick cinsinden
-  - [ ] Eski `task_delay()` kaldır veya deprecate et
-  - [ ] **Dosya:** scheduler.h, scheduler.c
+  - [X] `task_delay_ms(uint32_t ms)` - Milisaniye cinsinden
+  - [X] `task_delay_ticks(uint32_t ticks)` - Tick cinsinden
+  - [X] Eski `task_delay()` kaldır veya deprecate et
+  - [X] **Dosya:** scheduler.h, scheduler.c
 
   ### 2. **Error Handling & Return Codes**
   - [ ] `sched_add_task()` → return `int8_t` (-1 = full, -2 = invalid)
@@ -36,15 +38,15 @@ GitHub Copilot: Read [](file:///run/media/tura/Ventoy/VSCode/Workspace/stm32f103
   - [ ] **Dosya:** `drivers/uart.c`, `drivers/uart.h`, `drivers/debug.c`
 
   ### 4. **Stack Overflow Koruması**
-  - [ ] Stack end'e `0xDEADBEEF` pattern yaz
+  - [X] Stack end'e `0xDEADBEEF` pattern yaz
   - [ ] Scheduler tick'te kontrol et
   - [ ] Overflow durumunda fault handler çağır
   - [ ] **Dosya:** scheduler.c
 
   ### 5. **Header Guard Hataları Düzelt**
-  - [ ] scheduler.h → `/* SCHEDULER_H_ */` yaz (şu anda `MAIN_H_`)
-  - [ ] Tüm header'larda guard kontrol et
-  - [ ] **Dosya:** scheduler.h, scheduler_config.h, scheduler_priv.h
+  - [X] scheduler.h → `/* SCHEDULER_H_ */` yaz (şu anda `MAIN_H_`)
+  - [X] Tüm header'larda guard kontrol et
+  - [X] **Dosya:** scheduler.h, scheduler_config.h, scheduler_priv.h
 
   ---
 

@@ -14,6 +14,7 @@ LDFLAGS    = -mcpu=$(TARGET_CPU) -mthumb --specs=nosys.specs -T$(LDSCRIPT) -Wl,-
 PROJECT_DIR    = .
 APP_DIR        = $(PROJECT_DIR)/app
 MIDDLEWARE_DIR = $(PROJECT_DIR)/middleware
+COMMON_DIR = $(PROJECT_DIR)/common
 PORT_DIR       = $(MIDDLEWARE_DIR)/portable/arm_cm3
 BSP_DIR        = $(PROJECT_DIR)/bsp/stm32f103c8t6
 DRIVERS_DIR    = $(PROJECT_DIR)/drivers
@@ -23,14 +24,16 @@ LDSCRIPT = $(BSP_DIR)/stm32f103c8t6_linker_script.ld
 
 # Include Yolları
 INCLUDES = -I$(APP_DIR) \
-           -I$(MIDDLEWARE_DIR)/include \
+           -I$(MIDDLEWARE_DIR) \
            -I$(PORT_DIR) \
            -I$(DRIVERS_DIR) \
-           -I$(BSP_DIR)
+           -I$(BSP_DIR) \
+		   -I$(COMMON_DIR)
 
 # Kaynak Dosyaları Otomatik Bulma
 SRCS = $(wildcard $(APP_DIR)/*.c) \
-       $(wildcard $(MIDDLEWARE_DIR)/src/*.c) \
+       $(wildcard $(MIDDLEWARE_DIR)/*.c) \
+	   $(wildcard $(COMMON_DIR)/*.c) \
        $(wildcard $(PORT_DIR)/*.c) \
        $(wildcard $(DRIVERS_DIR)/*.c) \
        $(wildcard $(BSP_DIR)/*.c)
