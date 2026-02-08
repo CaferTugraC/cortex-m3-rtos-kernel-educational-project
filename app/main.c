@@ -12,10 +12,20 @@ static uint32_t stack_array_tsk_i2c_lcd_write[256];
 
 int main(void)
 {
-    sched_init(HSI_CLOCK);
+    if(sched_init(HSI_CLOCK) != OK)
+    {
+        // ERROR LOG
+    }
 
-    sched_add_task(&tsk_dht11_read, &stack_array_tsk_dht11_read[0], 128);
-    sched_add_task(&tsk_i2c_lcd_write, &stack_array_tsk_i2c_lcd_write[0], 256);
+    if(sched_add_task(&tsk_dht11_read, &stack_array_tsk_dht11_read[0], 128) != OK)
+    {
+        // ERROR LOG
+    }
+
+    if(sched_add_task(&tsk_i2c_lcd_write, &stack_array_tsk_i2c_lcd_write[0], 256) != OK)
+    {
+        // ERROR LOG
+    }
 
 
     sched_start(&tsk_dht11_read);
