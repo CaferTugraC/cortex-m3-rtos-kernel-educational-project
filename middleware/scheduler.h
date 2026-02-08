@@ -5,8 +5,8 @@
  *      Author: tura
  */
 
-#ifndef SCHEDULER_H
-#define SCHEDULER_H
+#ifndef SCHEDULER_H_
+#define SCHEDULER_H_
 
 #include <stdint.h>
 #include <stddef.h>

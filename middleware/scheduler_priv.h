@@ -1,5 +1,5 @@
-#ifndef SCHEDULER_PRIV_H
-#define SCHEDULER_PRIV_H
+#ifndef SCHEDULER_PRIV_H_
+#define SCHEDULER_PRIV_H_
 
 #include "scheduler_config.h"
 #include <stdint.h>

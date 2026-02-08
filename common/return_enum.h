@@ -1,5 +1,5 @@
-#ifndef RETURN_ENUM_H
-#define RETURN_ENUM_H
+#ifndef RETURN_ENUM_H_
+#define RETURN_ENUM_H_
 
 typedef enum
 {

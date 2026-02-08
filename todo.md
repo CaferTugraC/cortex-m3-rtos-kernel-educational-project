@@ -25,11 +25,11 @@ GitHub Copilot: Read [](file:///run/media/tura/Ventoy/VSCode/Workspace/stm32f103
   - [X] **Dosya:** scheduler.h, scheduler.c
 
   ### 2. **Error Handling & Return Codes**
-  - [ ] `sched_add_task()` → return `int8_t` (-1 = full, -2 = invalid)
-  - [ ] `sched_init()` → return `int8_t` (-1 = init failed)
-  - [ ] `task_delay()` → return `int8_t` (-1 = invalid task)
-  - [ ] Enum oluştur: `SCHED_OK`, `SCHED_ERR_MAX_TASKS`, vb.
-  - [ ] **Dosya:** scheduler.h, scheduler_priv.h
+  - [X] `sched_add_task()` → return `int8_t` (-1 = full, -2 = invalid)
+  - [X] `sched_init()` → return `int8_t` (-1 = init failed)
+  - [X] `task_delay()` → return `int8_t` (-1 = invalid task)
+  - [X] Enum oluştur: `SCHED_OK`, `SCHED_ERR_MAX_TASKS`, vb.
+  - [X] **Dosya:** scheduler.h, scheduler_priv.h
 
   ### 3. **Logging/Debug Mekanizması**
   - [ ] UART driver yazılmalı (seri haberleşme)
