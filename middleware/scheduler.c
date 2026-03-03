@@ -206,7 +206,7 @@ void unblock_tasks(void)
 	{
 		if(user_tasks[i].current_state != TASK_READY_STATE)
 		{
-			if(user_tasks[i].block_count >= g_tick_count)
+			if(user_tasks[i].block_count <= g_tick_count)
 			{
 				user_tasks[i].current_state = TASK_READY_STATE;
 			}
