@@ -8,7 +8,7 @@
 .global PendSV_Handler
 .global HardFault_Handler
 .global BusFault_Handler
-.global MemFault_Handler
+.global MemManage_Handler
 .global UsageFault_Handler
 .global switch_sp_to_psp
 .global init_sched_stack
@@ -21,7 +21,7 @@
 .extern update_next_task
 .extern HardFault_Handler_c
 .extern BusFault_Handler_c
-.extern MemFault_Handler_c
+.extern MemManage_Handler_c
 .extern UsageFault_Handler_c
 
 .type PendSV_Handler, %function
@@ -88,14 +88,14 @@ BusFault_Handler:
     MRSNE R0, PSP;
     B BusFault_Handler_c;
 
-.type MemFault_Handler, %function
+.type MemManage_Handler, %function
 .thumb_func
-MemFault_Handler:
+MemManage_Handler:
     TST LR, #4;
     ITE EQ;
     MRSEQ R0, MSP;
     MRSNE R0, PSP;
-    B MemFault_Handler_c;
+    B MemManage_Handler_c;
 
 .type UsageFault_Handler, %function
 .thumb_func

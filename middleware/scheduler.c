@@ -104,6 +104,11 @@ void idle_task_handler(void)
 	}
 }
 
+uint32_t sched_get_tick(void)
+{
+	return g_tick_count;
+}
+
 System_Status_t init_idle_task(void)
 {
 	return sched_add_task(&idle_task_handler, &stack_idle_task[0], 128);
@@ -123,6 +128,7 @@ System_Status_t schedule(void)
 	}
 	
 	port_trigger_context_switch();
+	return OK;
 }
 
 void task_delay_tick(uint32_t tick_count)
@@ -200,7 +206,7 @@ void unblock_tasks(void)
 	{
 		if(user_tasks[i].current_state != TASK_READY_STATE)
 		{
-			if(user_tasks[i].block_count == g_tick_count)
+			if(user_tasks[i].block_count >= g_tick_count)
 			{
 				user_tasks[i].current_state = TASK_READY_STATE;
 			}
