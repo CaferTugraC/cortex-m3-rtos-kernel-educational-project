@@ -28,7 +28,7 @@ int main(void)
     }
 
 
-    sched_start(&tsk_dht11_read);
+    sched_start();
 }
 
 void tsk_dht11_read(void)

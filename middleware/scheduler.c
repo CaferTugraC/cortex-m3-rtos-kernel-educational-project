@@ -4,7 +4,7 @@
 
 
 static volatile uint8_t task_count = 0U;
-static volatile uint8_t  current_task = 1; // task1 is running
+static volatile uint8_t  current_task = 0;
 static volatile uint32_t g_tick_count = 0;
 
 extern uint32_t _estack;
@@ -90,10 +90,10 @@ System_Status_t sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_a
   return OK;
 }
 
-void sched_start(void (*start_handler)(void))
+void sched_start()
 {
 	switch_sp_to_psp();
-	start_handler();
+	user_tasks[current_task].task_handler();
 }
 
 void idle_task_handler(void)
