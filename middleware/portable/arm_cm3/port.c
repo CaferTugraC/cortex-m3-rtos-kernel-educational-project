@@ -8,8 +8,24 @@ static SavePspFn_t save_psp_fn = NULL;
 static UpdateTaskFn_t update_task_fn = NULL;
 static CheckStackOverflowFn_t check_stack_overflow_fn = NULL;
 
+// Wrapper functions
+uint32_t port_get_task_psp(void)
+{
+    if (get_psp_fn != NULL) return get_psp_fn();
+    return 0;
+}
 
-// Hook kayıt fonksiyonları
+void port_save_task_psp(uint32_t psp)
+{
+    if (save_psp_fn != NULL) save_psp_fn(psp);
+}
+
+void port_update_next_task(void)
+{
+    if (update_task_fn != NULL) update_task_fn();
+}
+
+// Hook set funcitons
 void port_set_tick_hook(PortTickHook_t hook)
 {
     tick_hook_fn = hook;

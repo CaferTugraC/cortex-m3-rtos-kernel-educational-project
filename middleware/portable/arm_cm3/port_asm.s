@@ -16,9 +16,9 @@
 .global interrupt_enable
 
 .extern _estack
-.extern get_task_psp_value
-.extern save_psp_value
-.extern update_next_task
+.extern port_get_task_psp
+.extern port_save_task_psp
+.extern port_update_next_task
 .extern HardFault_Handler_c
 .extern BusFault_Handler_c
 .extern MemManage_Handler_c
@@ -29,9 +29,9 @@ PendSV_Handler:
     MRS R0, PSP
     STMDB R0!, {R4-R11}
     PUSH {LR}
-    BL save_psp_value
-    BL update_next_task
-    BL get_task_psp_value
+    BL port_save_task_psp
+    BL port_update_next_task
+    BL port_get_task_psp
     LDMIA R0!, {R4-R11}
     MSR PSP, R0
     POP {LR}
@@ -41,7 +41,7 @@ PendSV_Handler:
 .thumb_func
 switch_sp_to_psp:
     PUSH {LR}
-    BL get_task_psp_value
+    BL port_get_task_psp
     MSR PSP, R0
     POP {LR}
     MRS R0, CONTROL
