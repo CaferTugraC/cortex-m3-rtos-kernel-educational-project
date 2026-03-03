@@ -25,6 +25,7 @@
 .extern UsageFault_Handler_c
 
 .type PendSV_Handler, %function
+.thumb_func
 PendSV_Handler:
     MRS R0, PSP
     STMDB R0!, {R4-R11}

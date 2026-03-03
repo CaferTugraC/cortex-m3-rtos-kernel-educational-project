@@ -94,6 +94,9 @@ void sched_start()
 {
 	switch_sp_to_psp();
 	user_tasks[current_task].task_handler();
+
+	/* Should never reach here */
+	while(1);
 }
 
 void idle_task_handler(void)

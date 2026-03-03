@@ -29,6 +29,10 @@ int main(void)
 
 
     sched_start();
+
+    /* Should never reach here */
+    while(1);
+    return 0;
 }
 
 void tsk_dht11_read(void)

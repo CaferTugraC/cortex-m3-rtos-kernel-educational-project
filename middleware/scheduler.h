@@ -24,7 +24,7 @@
 // gloabal API
 System_Status_t sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16_t tsk_stack_size);
 System_Status_t sched_init(uint32_t clock_source);
-void sched_start(void (*task_handler)(void));
+void sched_start(void);
 System_Status_t init_idle_task(void);
 uint32_t sched_get_tick(void);
 void task_delay_tick(uint32_t tick_count);

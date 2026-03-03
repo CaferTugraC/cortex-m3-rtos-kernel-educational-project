@@ -41,7 +41,7 @@ void port_set_context_switch_hooks(GetPspFn_t get_psp, CheckStackOverflowFn_t ch
 
 void port_trigger_context_switch(void)
 {
-  uint32_t *pICSR = (uint32_t*)0xE000ED04U;
+  volatile uint32_t *pICSR = (volatile uint32_t*)0xE000ED04U;
 	// pend the pendSV exception
 	*pICSR |= (1UL << 28);
 }
@@ -56,7 +56,7 @@ System_Status_t port_init(uint32_t tick_hz, uint32_t cpu_clock)
 
 void init_processor_faults(void)
 {
-  uint32_t *pSHCSR = (uint32_t*)0xE000ED24U;
+  volatile uint32_t *pSHCSR = (volatile uint32_t*)0xE000ED24U;
   // enable all faults
   *pSHCSR |= (1UL << 16);
   *pSHCSR |= (1UL << 17);
@@ -68,8 +68,8 @@ System_Status_t init_SysTick_timer(uint32_t tick_hz, uint32_t cpu_clock)
   if (tick_hz == 0U || cpu_clock == 0U) return INVALID_PARAM;
   if(tick_hz > CONFIG_MAX_TICK_HZ) return INVALID_PARAM;
 
-  uint32_t *pSYST_CSRV = (uint32_t*)0xE000E010U;
-  uint32_t *pSYST_RVR = (uint32_t*)0xE000E014U;
+  volatile uint32_t *pSYST_CSRV = (volatile uint32_t*)0xE000E010U;
+  volatile uint32_t *pSYST_RVR = (volatile uint32_t*)0xE000E014U;
 
   // disable counter
   *pSYST_CSRV &= ~(1UL);
@@ -77,7 +77,7 @@ System_Status_t init_SysTick_timer(uint32_t tick_hz, uint32_t cpu_clock)
   uint32_t reload_value = (cpu_clock / tick_hz) - 1;
   if (reload_value > 0x00FFFFFFU) return INVALID_PARAM;
 
-  *pSYST_RVR &= ~(0x00FFFFFFFF);
+  *pSYST_RVR &= ~(0x00FFFFFFU);
   *pSYST_RVR |= reload_value;
 
   // enable systick exception
@@ -90,14 +90,14 @@ System_Status_t init_SysTick_timer(uint32_t tick_hz, uint32_t cpu_clock)
   return OK;
 }
 
-void SysTick_Handler(void) // geri dönüş değeri problemi çözülecek
+void SysTick_Handler(void)
 {
 	if(tick_hook_fn != NULL)  tick_hook_fn();
 
-  if(check_stack_overflow_fn() != 0)
-  {
-    return;
-  }
+	if(check_stack_overflow_fn != NULL && check_stack_overflow_fn() != 0)
+	{
+		return;
+	}
 
 	port_trigger_context_switch();
 }
