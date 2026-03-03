@@ -4,11 +4,11 @@
 
 // #include "scheduler_priv.h" // debug 
 
-void tsk_dht11_read(void);
-void tsk_i2c_lcd_write(void);
+void task_led1(void);
+void task_led2(void);
 
-static uint32_t stack_array_tsk_dht11_read[128];
-static uint32_t stack_array_tsk_i2c_lcd_write[256];
+static uint32_t stack_array_task_led1[128];
+static uint32_t stack_array_task_led2[256];
 
 int main(void)
 {
@@ -17,12 +17,12 @@ int main(void)
         // ERROR LOG
     }
 
-    if(sched_add_task(&tsk_dht11_read, &stack_array_tsk_dht11_read[0], 128) != OK)
+    if(sched_add_task(&task_led1, &stack_array_task_led1[0], 128) != OK)
     {
         // ERROR LOG
     }
 
-    if(sched_add_task(&tsk_i2c_lcd_write, &stack_array_tsk_i2c_lcd_write[0], 256) != OK)
+    if(sched_add_task(&task_led2, &stack_array_task_led2[0], 256) != OK)
     {
         // ERROR LOG
     }
@@ -35,7 +35,7 @@ int main(void)
     return 0;
 }
 
-void tsk_dht11_read(void)
+void task_led1(void)
 {
     while(1)
     {
@@ -48,7 +48,7 @@ void tsk_dht11_read(void)
         //         test_stack_overflow_array[i] = 0xCACACACAUL;
         //     }
 
-        //     tsk_dht11_read();
+        //     task_led1();
         // }
         // else
         // {
@@ -59,7 +59,7 @@ void tsk_dht11_read(void)
     }
 }
 
-void tsk_i2c_lcd_write(void)
+void task_led2(void)
 {
     while(1)
     {
