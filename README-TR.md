@@ -24,17 +24,6 @@ Proje, aşağıdaki katmanlı mimari üzerine kurulmuştur:
 - **BSP (Board Support Package):** Hedef donanım kartına (örn: STM32F103C8T6) özgü başlangıç kodları ve donanım sürücülerini içerir. (`bsp/`)
 - **Drivers (Sürücü Katmanı):** LED gibi çevresel birimlerin sürücülerini barındırır. (`drivers/`)
 
-```mermaid
-graph TD
-    A[Uygulama (main.c)] --> B{RTOS API (scheduler.h)};
-    B --> C[RTOS Çekirdeği (scheduler.c)];
-    C --> D{Port Katmanı (port.h)};
-    D --> E[Mimar-Özgü Kod (port.c, port_asm.s)];
-    C --> F{Sürücüler (led.h)};
-    F --> G[Donanım Sürücüleri (led.c)];
-    E --> H[Donanım (Cortex-M3)];
-    G --> H;
-```
 
 ## 🛠️ Kurulum ve Derleme
 Projeyi derlemek için aşağıdaki adımları izleyin:

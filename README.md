@@ -28,18 +28,6 @@ The project is built upon the following layered architecture:
 
 - **Drivers Layer:** Contains drivers for peripherals such as LEDs. (drivers/)
 
-```mermaid
-graph TD
-    A[Application (main.c)] --> B{RTOS API (scheduler.h)};
-    B --> C[RTOS Kernel (scheduler.c)];
-    C --> D{Port Layer (port.h)};
-    D --> E[Arch-Specific Code (port.c, port_asm.s)];
-    C --> F{Drivers (led.h)};
-    F --> G[Hardware Drivers (led.c)];
-    E --> H[Hardware (Cortex-M3)];
-    G --> H;
-```
-
 ## 🛠️ Setup and Compilation
 Follow these steps to compile the project:
 
