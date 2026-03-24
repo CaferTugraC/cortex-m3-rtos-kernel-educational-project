@@ -49,7 +49,6 @@ void port_trigger_context_switch(void)
 System_Status_t port_init(uint32_t tick_hz, uint32_t cpu_clock)
 {
   init_processor_faults();
-  // set Priortiy for PendSv and Systic - To do
   
   return init_SysTick_timer(tick_hz, cpu_clock);
 }
