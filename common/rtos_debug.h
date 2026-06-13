@@ -17,20 +17,19 @@
      * The file name and line number are recorded in volatile variables
      * so they can be easely inspected with a debugger.
      */
-    #define RTOS_ASSERT(expr) {                                 \
+    #define RTOS_ASSERT(expr)                                   \
         do {                                                    \
             if ((expr) == 0) {                                  \
                 interrupt_disable();                            \
                 volatile const char * assert_file = __FILE__;   \
-                volatile int assert_lint = __LINE__;            \
-                (void)assert_file; /* Prevent unsed warn */     \
+                volatile int assert_line = __LINE__;            \
+                (void)assert_file; /* Prevent unused warn */    \
                 (void)assert_line;                              \
                 while (1) {                                     \
                     __asm volatile("nop");                      \
                 }                                               \
             }                                                   \
         } while(0)
-    }
 
 #else
 
