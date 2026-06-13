@@ -86,7 +86,7 @@ System_Status_t init_SysTick_timer(uint32_t tick_hz, uint32_t cpu_clock)
   // enable counter
   *pSYST_CSRV |= (1UL << 0);
   
-  return OK;
+  return KERNEL_OK;
 }
 
 void SysTick_Handler(void)

@@ -27,7 +27,7 @@ System_Status_t sched_init(uint32_t clock_source)
 		&update_next_task
 	);
 
-	if(port_init(TICK_HZ, clock_source) == ERROR_INIT){
+	if(port_init(TICK_HZ, clock_source) == KERNEL_ERROR_PORT_INIT){
 		return KERNEL_ERROR_PORT_INIT;
 	}
 	
@@ -131,11 +131,11 @@ System_Status_t schedule(void)
 {
 	if(check_task_stack_overflow() != 0)
 	{
-		return ERROR_STACK_OVERFLOW;
+		return KERNEL_ERROR_STACK_OVERFLOW;
 	}
 	
 	port_trigger_context_switch();
-	return OK;
+	return KERNEL_OK;
 }
 
 void task_delay_tick(uint32_t tick_count)

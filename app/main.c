@@ -17,24 +17,24 @@ static uint32_t stack_array_task_led3[128];
 
 int main(void)
 {
-    if(sched_init(HSI_CLOCK) != OK)
+    if(sched_init(HSI_CLOCK) != KERNEL_OK)
     {
         // ERROR LOG
     }
 
     init_all_leds();
 
-    if(sched_add_task(&task_led1, &stack_array_task_led1[0], 128) != OK)
+    if(sched_add_task(&task_led1, &stack_array_task_led1[0], 128) != KERNEL_OK)
     {
         // ERROR LOG
     }
 
-    if(sched_add_task(&task_led2, &stack_array_task_led2[0], 128) != OK)
+    if(sched_add_task(&task_led2, &stack_array_task_led2[0], 128) != KERNEL_OK)
     {
         // ERROR LOG
     }
 
-    if(sched_add_task(&task_led3, &stack_array_task_led3[0], 128) != OK)
+    if(sched_add_task(&task_led3, &stack_array_task_led3[0], 128) != KERNEL_OK)
     {
         // ERROR LOG
     }
