@@ -1,6 +1,7 @@
 #include "scheduler.h"
 #include "scheduler_priv.h"
 #include "port.h"
+#include "rtos_debug.h"
 
 
 static volatile uint8_t task_count = 0U;
@@ -15,9 +16,7 @@ static TCB_t user_tasks[MAX_TASKS];
 
 System_Status_t sched_init(uint32_t clock_source)
 {
-	if (clock_source == 0U) {
-		return KERNEL_ERROR_INVALID_PARAM;
-	}
+	RTOS_ASSERT(clock_source != 0U);
 
 	port_set_tick_hook(&sched_tick_handler);
 	port_set_context_switch_hooks(
@@ -36,12 +35,14 @@ System_Status_t sched_init(uint32_t clock_source)
 
 System_Status_t sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_addr, uint16_t tsk_stack_size)
 {
+  RTOS_ASSERT(task_handler != NULL);
+  RTOS_ASSERT(tsk_stack_addr != NULL);
+  RTOS_ASSERT(tsk_stack_size >= MIN_STACK_SIZE);
+
   if (task_count >= MAX_TASKS)
   {
 	  return KERNEL_REACHED_MAX_TASK;
   }
-  if (task_handler == NULL || tsk_stack_addr == NULL) return KERNEL_ERROR_INVALID_PARAM;
-  if (tsk_stack_size < MIN_STACK_SIZE) return KERNEL_ERROR_INVALID_PARAM;
 
   // set STACK_END_VALUE to end of stack for stackowerflow protection.
   tsk_stack_addr[MIN_STACK_FRAME_SIZE] = STACK_END_VALUE;
