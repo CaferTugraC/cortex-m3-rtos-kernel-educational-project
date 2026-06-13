@@ -6,9 +6,9 @@ typedef enum
     /* Success & Warnings*/
     KERNEL_OK = 0,
     KERNEL_WARNING = 1,
+    KERNEL_ERROR_PORT_INIT = 2,
 
     /* Task & Scheduling Errors*/
-    KERNEL_ERROR_INIT = 2,
     KERNEL_ERROR_STACK_OVERFLOW = 3,
     KERNEL_REACHED_MAX_TASK = 4,
 
