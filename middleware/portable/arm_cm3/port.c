@@ -64,8 +64,8 @@ void init_processor_faults(void)
 
 System_Status_t init_SysTick_timer(uint32_t tick_hz, uint32_t cpu_clock)
 {
-  if (tick_hz == 0U || cpu_clock == 0U) return INVALID_PARAM;
-  if(tick_hz > CONFIG_MAX_TICK_HZ) return INVALID_PARAM;
+  if (tick_hz == 0U || cpu_clock == 0U) return KERNEL_ERROR_INVALID_PARAM;
+  if(tick_hz > CONFIG_MAX_TICK_HZ) return KERNEL_ERROR_INVALID_PARAM;
 
   volatile uint32_t *pSYST_CSRV = (volatile uint32_t*)0xE000E010U;
   volatile uint32_t *pSYST_RVR = (volatile uint32_t*)0xE000E014U;
@@ -74,7 +74,7 @@ System_Status_t init_SysTick_timer(uint32_t tick_hz, uint32_t cpu_clock)
   *pSYST_CSRV &= ~(1UL);
 
   uint32_t reload_value = (cpu_clock / tick_hz) - 1;
-  if (reload_value > 0x00FFFFFFU) return INVALID_PARAM;
+  if (reload_value > 0x00FFFFFFU) return KERNEL_ERROR_INVALID_PARAM;
 
   *pSYST_RVR &= ~(0x00FFFFFFU);
   *pSYST_RVR |= reload_value;

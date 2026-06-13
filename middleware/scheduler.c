@@ -15,7 +15,10 @@ static TCB_t user_tasks[MAX_TASKS];
 
 System_Status_t sched_init(uint32_t clock_source)
 {
-	if (clock_source == 0U) return INVALID_PARAM;
+	if (clock_source == 0U) {
+		return KERNEL_ERROR_INVALID_PARAM;
+	}
+
 	port_set_tick_hook(&sched_tick_handler);
 	port_set_context_switch_hooks(
 		&get_task_psp_value,
@@ -24,7 +27,9 @@ System_Status_t sched_init(uint32_t clock_source)
 		&update_next_task
 	);
 
-	if(port_init(TICK_HZ, clock_source) == ERROR_INIT) return ERROR_INIT;
+	if(port_init(TICK_HZ, clock_source) == ERROR_INIT){
+		return KERNEL_ERROR_PORT_INIT;
+	}
 	
 	return init_idle_task();
 }
@@ -33,11 +38,10 @@ System_Status_t sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_a
 {
   if (task_count >= MAX_TASKS)
   {
-	  /* Error: reached max task value. */
-	  return REACHED_MAX_TASK;
+	  return KERNEL_REACHED_MAX_TASK;
   }
-  if (task_handler == NULL || tsk_stack_addr == NULL) return INVALID_PARAM;
-  if (tsk_stack_size < MIN_STACK_SIZE) return INVALID_PARAM;
+  if (task_handler == NULL || tsk_stack_addr == NULL) return KERNEL_ERROR_INVALID_PARAM;
+  if (tsk_stack_size < MIN_STACK_SIZE) return KERNEL_ERROR_INVALID_PARAM;
 
   // set STACK_END_VALUE to end of stack for stackowerflow protection.
   tsk_stack_addr[MIN_STACK_FRAME_SIZE] = STACK_END_VALUE;
@@ -87,7 +91,7 @@ System_Status_t sched_add_task(void (*task_handler)(void), uint32_t *tsk_stack_a
 
   user_tasks[task_count].psp_value = (uintptr_t)pPSP;
   task_count++;
-  return OK;
+  return KERNEL_OK;
 }
 
 void sched_start()
@@ -167,9 +171,9 @@ System_Status_t check_task_stack_overflow(void)
 	if(*pStack != STACK_END_VALUE || (uint32_t)pStack > user_tasks[current_task].psp_value)
 	{
 		__asm volatile("BL UsageFault_Handler");
-		return ERROR_STACK_OVERFLOW; // stack owerflow danger!
+		return KERNEL_ERROR_STACK_OVERFLOW; // stack owerflow danger!
 	}
-	return OK;
+	return KERNEL_OK;
 }
 
 void save_psp_value(uint32_t current_psp_value)
