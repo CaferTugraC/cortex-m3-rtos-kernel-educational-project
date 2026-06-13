@@ -3,3 +3,9 @@ template.md
 build
 .vscode
 .settings
+
+# Jupyter
+.ipynb_checkpoints
+
+# Dev specific files
+Notes
