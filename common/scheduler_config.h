@@ -7,4 +7,7 @@
 
 #define MIN_STACK_SIZE 64U
 
+/* Define this macro to 1 to enable assertions, or 0 to disable them */
+#define USE_RTOS_ASSERT 1U
+
 #endif
