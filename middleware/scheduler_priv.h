@@ -7,6 +7,15 @@
 
 #define STACK_END_VALUE 0xDEADBEEFU
 
+typedef struct
+{
+  uintptr_t psp_value;
+  uint32_t *stack_limit;
+  uint32_t block_count;
+  uint8_t current_state;
+  void (*task_handler)(void);
+} TCB_t;
+
 // private API
 void idle_task_handler(void);
 void save_psp_value(uint32_t current_psp_value);
@@ -18,15 +27,5 @@ System_Status_t check_task_stack_overflow(void);
 void sched_tick_handler(void);
 System_Status_t schedule(void);
 
-
-
-typedef struct
-{
-  uintptr_t psp_value;
-  uint32_t *stack_limit;
-  uint32_t block_count;
-  uint8_t current_state;
-  void (*task_handler)(void);
-} TCB_t;
 
 #endif
