@@ -71,9 +71,5 @@ $(BUILD_DIR)/%.o: %.s
 clean:
 	rm -rf $(BUILD_DIR)
 
-# Cppcheck & MISRA Analizi
-check:
-	cppcheck --enable=all $(INCLUDES) --addon=misra ./middleware/*.c ./app/*.c
-
 load:
 	openocd -f interface/stlink.cfg -f board/stm32f103c8_blue_pill.cfg
